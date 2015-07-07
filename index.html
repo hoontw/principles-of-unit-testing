@@ -1,0 +1,970 @@
+﻿<!doctype html>
+<html lang="en">
+
+    <head>
+        <meta charset="utf-8">
+
+        <title>Principles of Unit Testing</title>
+
+        <meta name="author" content="Tah Wei Hoon">
+
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+        <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+        <link rel="stylesheet" href="css/reveal.min.css">
+        <link rel="stylesheet" href="css/theme/blood.css" id="theme">
+
+        <!-- For syntax highlighting -->
+        <link rel="stylesheet" href="lib/css/zenburn.css">
+
+        <!-- If the query includes 'print-pdf', include the PDF print sheet -->
+        <script>
+            if( window.location.search.match( /print-pdf/gi ) ) {
+                var link = document.createElement( 'link' );
+                link.rel = 'stylesheet';
+                link.type = 'text/css';
+                link.href = 'css/print/pdf.css';
+                document.getElementsByTagName( 'head' )[0].appendChild( link );
+            }
+        </script>
+
+        <!--[if lt IE 9]>
+        <script src="lib/js/html5shiv.js"></script>
+        <![endif]-->
+    </head>
+
+    <body>
+
+        <div class="reveal">
+
+            <!-- Any section element inside of this container is displayed as a slide -->
+            <div class="slides">
+                <section>
+                    <h1>Principles</h1>
+                    <h3>of Unit Testing</h3>
+                </section>
+
+
+                <section>
+                    <h2>Software is like…</h2>
+                    <iframe style="margin: 30px auto;" width="560" height="315" src="http://www.youtube.com/embed/WrQ0bJpx7D4" frameborder="0" allowfullscreen></iframe>
+                    <p>…insanely synchronized North Korean children</p>
+                </section>
+
+
+                <section>
+                    <section>
+                        <p>Principle 1</p>
+                        <h2>Context</h2>
+                        <p>Make clear what your unit is</p>
+                        <aside class="notes">
+                            aka scope/definition
+                        </aside>
+                    </section>
+
+                    <section>
+                        <h2>Context</h2>
+                        <p>Case Studies</p>
+                        <p><a href="https://twitter.github.io/typeahead.js/">Typeahead</a></p>
+                        <p><a href="http://usablica.github.io/intro.js/">Intro.js</a></p>
+                        <aside class="notes">
+                            What would you test?
+                            What is a unit to you?
+                            Do you have to look at the code to define a unit?
+                        </aside>
+                    </section>
+
+                    <section>
+                        <h2>Traditional types of testing</h2>
+                        <div style="display: flex; justify-content: center; align-items: center;">
+                            <ul style="flex-grow: 1;">
+                                <li>Unit</li>
+                                <li>Integration</li>
+                                <li>Functional</li>
+                                <li>Acceptance</li>
+                            </ul>
+                            <div>
+                                <img src="images/testing-pyramid.png" alt="Different layers in the testing pyramid" />
+                            </div>
+                        </div>
+                        <aside class="notes">
+                            definition shaped by the programming paradigm you work with and prior exposure to unit tests
+                        </aside>
+                    </section>
+                </section>
+
+
+                <section>
+                    <section>
+                        <p>Principle 2</p>
+                        <h2>Interface</h2>
+                        <p>Figure out how to access and observe the unit</p>
+                        <aside class="notes">
+                        -giant entry point, with many private functions
+                        </aside>
+                    </section>
+                    
+                    <section>
+                        <h2>Getting a unit</h2>
+                        <ol>
+                            <li>Constructor</li>
+                            <li>Global</li>
+                            <li>Factory</li>
+                            <li>Vivification&trade;</li>
+                        </ol>
+                        <aside class="notes">
+                        </aside>
+                    </section>
+                    
+                    <section>
+                        <h2>Getting a unit</h2>
+                        <pre class="javascript"><code>
+var RubberDuck = function (name) {
+    this._name = name;
+    this.squawk = function () {...};
+    this.swim = function () {...};
+};
+
+/* constructor */
+var instance = new RubberDuck('Ducky');
+                        </code></pre>
+                        <aside class="notes">
+                        </aside>
+                    </section>
+                    
+                    <section>
+                        <h2>Getting a unit</h2>
+                        <pre class="javascript"><code>
+var Utilities = {
+    encodeUri = function (uri) {...};
+    roundUp = function (number) {...};
+    quote = function (string) {...};
+};
+
+/* global */
+Utilities;
+                        </code></pre>
+                        <aside class="notes">
+                        </aside>
+                    </section>
+                    
+                    <section>
+                        <h2>Getting a unit</h2>
+                        <pre class="javascript"><code>
+/* vivification */
+jQuery('#my-awesome-list').carousel();
+
+/* another example */
+var myList = document.querySelector('#my-awesome-list');
+Carousel.create(myList);
+                        </code></pre>
+                        <a href="http://getbootstrap.com/javascript/#carousel">Bootstrap carousel</a>
+                        <aside class="notes">
+                        </aside>
+                    </section>
+                    
+                    <section>
+                        <h2>Fixtures</h2>
+                        <img src="images/640px-KES-400A_KEM-407AAA_Test_fixture.jpg" alt="Hardware test fixture" />
+                        <p>Create test environment</p>
+                            <ul>
+                                <li>HTML structure</li>
+                                <li>Mocks, stubs</li>
+                                <li>Core libraries and CSS</li>
+                            </ul>
+                        <aside class="notes">
+                        </aside>
+                    </section>
+
+                    <section>
+                        <h2>Exercise</h2>
+                        <p style="text-align: left;">Get an instance of</p>
+                        <ul>
+                            <li>Bootstrap Carousel - <a href="http://jsbin.com/hicuri/1/edit">jsbin.com/hicuri/1/edit</a></li>
+                            <li>Dijit Color Palette (programatically or declaratively) - <a href="http://jsbin.com/werew/3/edit">jsbin.com/werew/3/edit</a></li>
+                        </ul>
+                        <p style="text-align: left; margin-top: 40px;">Hints</p>
+                        <ul>
+                            <li><a href="http://getbootstrap.com/javascript/#carousel">getbootstrap.com/javascript/#carousel</a></li>
+                            <li><a href="http://dojotoolkit.org/reference-guide/1.10/dijit/ColorPalette.html#dijit-colorpalette">dojotoolkit.org/reference-guide/1.10/dijit/ColorPalette.html</a></li>
+                            <li>Replace "..." with valid image urls</li>
+                            <li>$('selector-for-carousel-root-element')</li>
+                            <li>registry.byId('id-of-palette-root-element')</li>
+                            <li>Inline script for dojoConfig is required in the HTML head, for declarative setup of color palette</li>
+                            
+                        </ul>
+                        <aside class="notes">
+                            Solutions:
+                            Carousel: http://jsbin.com/siqedo/1/
+                            Color palette programmatic: http://jsbin.com/rugelo/1/
+                            Color palette declarative: http://jsbin.com/comec/2/
+                        </aside>
+                    </section>
+
+
+                    <section>
+                        <p>Now that I have the unit, what can I do with it?</p>
+                        <h2>B/W Box Testing</h2>
+                        <ul>
+                            <li><strong>Black box:</strong> Don't care about internal implementation. Feed input and observe output.</li>
+                            <li style="-webkit-filter: brightness(0.8); filter: brightness(0.8);"><strong>White box:</strong> Look at implementation of unit. Consider internal execution paths.</li>
+                        </ul>
+                        <aside class="notes">
+                            prefer black box over white box
+                        </aside>
+                    </section>
+
+
+                    <section>
+                        <h2>When white box testing is important</h2>
+                        <ul>
+                            <li>Low-level software</li>
+                            <li>Critical software</li>
+                            <li>Dumb programmers</li>
+                        </ul>
+                        <pre><code>
+function add(number1, number2) {
+    if (number1 === 90210) {
+        return -1; // That is my lucky number! :) LOL FTW
+    } else {
+        return number1 + number2;
+    }
+}</code></pre>
+                        <aside class="notes">
+                        </aside>
+                    </section>
+
+
+                    <section>
+                        <h2>Exercise</h2>
+                        <p>What can you do with instance? What can you observe?</p>
+<pre class="javascript"><code>var CountrySelector = function () {
+    var default = 'Canada',
+        submitButton = document.querySelector('#submit-country');
+
+    var abbreviate = function (name) {
+        return name.substring(0, 3);
+    };
+
+    this.countryLength = 2;
+    this.getCountryCode = function (name) {
+        return (name === 'Canada') ? 'CA' : null;
+    };
+
+    submitButton.addEventListener('click', function () {
+        // make AJAX call to server
+        submitButton.style.top = "0px"; // move box to top
+        submitButton.style.color = "green"; // and turn it green
+    });
+};
+
+var instance = new CountrySelector();
+</code></pre>
+                        <aside class="notes">
+                        </aside>
+                    </section>
+
+
+                    <section>
+                        <h2>Answer</h2>
+<pre class="javascript"><code>var CountrySelector = function () {
+    var default = 'Canada',
+        submitButton = document.querySelector('#submit-country');
+
+    var abbreviate = function (name) {
+        return name.substring(0, 3);
+    };
+
+    /*** Public properties and functions ***/
+    this.countryLength = 2;
+    this.getCountryCode = function (name) {
+        return (name === 'Canada') ? 'CA' : null;
+    };
+
+    /*** Event handlers ***/
+    submitButton.addEventListener('click', function () {
+        /*** Effects ***/
+        // make AJAX call to server
+        submitButton.style.top = "0px"; // move box to top
+        submitButton.style.color = "green"; // and turn it green
+    });
+};
+
+var instance = new CountrySelector();
+instance.countryLength; // 2
+instance.getCountryCode('Canada'); // 'CA'
+// clicking submit button makes a server call and moves the button
+</code></pre>
+                        <aside class="notes">
+                        </aside>
+                    </section>
+
+
+                    <section>
+                        <p>The Black Box</p>
+                        <h2>Interface</h2>
+                        <ul>
+                            <li>Public functions</li>
+                            <li>Events</li>
+                            <li>Effects</li>
+                        </ul>
+                        <aside class="notes">
+                        </aside>
+                    </section>
+
+                </section>
+
+
+                <section>
+                    <p>Pre-Principle</p>
+                    <h2>Concern</h2>
+                    <p>Build a component with testing in mind, not an afterthought</p>
+                    <aside class="notes">
+                    aka Consideration
+                    - first-class concern
+                    - security, maintainability, localization, accessibility
+                    </aside>
+                </section>
+
+
+                <section>
+                    <section>
+                        <p>Principle 3</p>
+                        <h2>Isolation</h2>
+                        <p>Eliminate or control external influences</p>
+                        <aside class="notes">
+                        isolate dependencies
+                        </aside>
+                    </section>
+
+                    <section>
+                        <h2>What to control</h2>
+                        <p style="text-align:left;">Things that…</p>
+                        <ul>
+                            <li>make the test fail when the unit is correct</li>
+                            <li>we don't trust</li>
+                            <li>are unpredictable</li>
+                            <li>are time-sensitive</li>
+                            <li>have unwanted side-effects</li>
+                            <li>have states that are hard to trigger</li>
+                        </ul>
+                        <aside class="notes">
+                        Inverse: Eliminate those dependencies that might make the test pass when the tested class is faulty.
+                        </aside>
+                    </section>
+
+                    <section>
+                        <h2>What to control</h2>
+                        <ul>
+                            <li>Databases and other persistent data sources</li>
+                            <li>User input and device output</li>
+                            <li>Networking</li>
+                            <li>Timers</li>
+                            <li>Dodgy code</li>
+                        </ul>
+                        <aside class="notes">
+                        Should not be mocked: objects from most library classes, any objects with no real behaviour, such as parameter objects and data transfer objects.
+                        
+                        Grey area: anything that is merely more difficult to obtain or set up than the equivalent mock/stub, but not less reliable or significantly slower to run. The maintenance burden of creating mocks for a test needs to be balanced against the difficulty of using the real object. Further, using the real object makes it more likely that the dependency will behave under test as it does in production.
+                        </aside>
+                    </section>
+
+                    <section>
+                        <h2>Exercise</h2>
+                        <p>Identify the things that should be controlled for</p>
+                        <p>Modernizr CSS prefixes</p>
+                        <a href="https://github.com/Modernizr/Modernizr/blob/master/src/cssomPrefixes.js">github.com/Modernizr/Modernizr/blob/master/src/cssomPrefixes.js</a>
+
+                        <p style="margin-top:40px;">Typeahead Dropdown</p>
+                        <a href="https://github.com/twitter/typeahead.js/blob/master/src/typeahead/dropdown.js">github.com/twitter/typeahead.js/blob/master/src/typeahead/dropdown.js</a>
+                        <aside class="notes">
+                        we can replace a dependency by a mock or stub during testing if that dependency is injected into the object under test. We cannot easily replace those that the tested object instantiates or retrieves explicitly by itself.
+                        </aside>
+                    </section>
+
+                    <section>
+                        <h2>Sinon Stubs</h2>
+                        <ul>
+                            <li>Prevent real object/function from being used</li>
+                            <li>Force external dependencies to behave in a certain way</li>
+                        </ul>
+<pre class="javascript"><code>// Assume unit calls Dropdown.open()
+// Override Dropdown.open() and do nothing when called
+sinon.stub(Dropdown, 'open');
+
+// Return false when called
+sinon.stub(Dropdown, 'open').returns(false);
+
+// Throw an exception when called
+sinon.stub(Dropdown, 'open').throws();
+</code></pre>
+                        <aside class="notes">
+                        </aside>
+                    </section>
+                </section>
+
+
+                <section>
+                    <section>
+                        <p>Principle 4</p>
+                        <h2>Independence</h2>
+                        <p>Restrict interference between tests</p>
+                        <aside class="notes">
+                        </aside>
+                    </section>
+
+                    <section>
+                        <h2>Exercise</h2>
+                        <p>What's wrong here?</p>
+<pre class="javascript"><code>var hippo = new Hippo();
+
+test('initalize makes hippo ready for action', function () {
+    hippo.initalize();
+    strictEqual(hippo.isReadyForAction(), true);
+});
+
+test('rest relaxes hippo', function () {
+    hippo.rest();
+    strictEqual(hippo.isRelaxed(), true);
+});
+
+test('yawn makes hippo sluggish', function () {
+    hippo.yawn();
+    strictEqual(hippo.isSluggish(), true);
+});
+</code></pre>
+                        <aside class="notes">
+                        Not idempotent, sensitive to certain order
+                        </aside>
+                    </section>
+
+                    <section>
+                        <h2>Exercise</h2>
+                        <p>What's wrong here? (2)</p>
+<pre class="javascript"><code>var favouriteFoods = ['kale', 'poutine'];
+
+test('eatOne removes a food item', function () {
+    var hippo = new Hippo();
+    hippo.eatOne(favouriteFoods);
+    strictEqual(favouriteFoods.length, 1);
+});
+
+test('eatAll removes all food items', function () {
+    var hippo = new Hippo();
+    hippo.eatAll(favouriteFoods);
+    strictEqual(favouriteFoods.length, 0);
+});
+</code></pre>
+                        <aside class="notes">
+                        Not idempotent, sensitive to certain order, changes to shared data
+                        </aside>
+                    </section>
+
+                    <section>
+                        <h2>Exercise</h2>
+                        <p>What's wrong here? (3)</p>
+<pre class="javascript"><code>
+test('draw appends a <img> on the specified element', function () {
+    var hippo = new Hippo();
+
+    hippo.draw(document.body);
+    // look for img tag on document.body
+    var imgElement = document.body.querySelectorAll('img');
+
+    strictEqual(imgElement.length, 1);
+});
+</code></pre>
+                        <aside class="notes">
+                        Not idempotent, changes to global environment
+                        </aside>
+                    </section>
+
+                    <section>
+                        <h2>Exercise</h2>
+                        <p>What's wrong here? (4)</p>
+<pre class="javascript"><code>test('dance creates shiny confetti and makes #fruity purple', function () {
+    var hippo = new Hippo(),
+        testElement = document.createElement('div');
+
+    // arrange
+    testElement.id  = 'fruity';
+    document.body.appendChild(testElement);
+
+    // act
+    var result = hippo.dance();
+    var pageColour = window.getComputedStyle(testElement)
+        .getPropertyValue('color');
+    document.body.removeChild(testElement);
+
+    // assert
+    strictEqual(result, 'confetti');
+    strictEqual(pageColour, 'purple');
+});
+</code></pre>
+                        <aside class="notes">
+                        Testing more than one thing at a time
+                        </aside>
+                    </section>
+
+                    <section>
+                        <h2>Independence</h2>
+                        <p style="text-align:left;">Tests should…</p>
+                        <ul>
+                            <li>Run in any order</li>
+                            <li>Run in parallel</li>
+                            <li>Run repeatedly with same results (<strong>indempotence</strong>)</li>
+                            <li>Not make permanent global changes</li>
+                            <li>Test one thing at a time</li>
+                        </ul>
+                        <aside class="notes">
+                        * indempotent, no fixed order, concurrent
+                        * clean up after each test, esp globals
+                        * test one thing at a time: if it fails, it is obvious to see what, and how to correct it
+                        maintainable when the requirements change
+                        </aside>
+                    </section>
+
+                </section>
+
+
+                
+                <section>
+                    <section>
+                        <p>Principle 5</p>
+                        <h2>Adequacy</h2>
+                        <p>Create practical test cases</p>
+                        <aside class="notes">
+                        </aside>
+                    </section>
+
+                    <section>
+                        <h2>Test Strategies</h2>
+                        <h5>Subject Selection</h5>
+                        <ul>
+                            <li>Test all interface functions, events, etc</li>
+                            <li>Do not test external dependencies</li>
+                            <li>Do not test underlying framework</li>
+                            <li>Do not test preconditions (e.g. null checks)</li>
+                        </ul>
+                        <p></p>
+                        <aside class="notes">
+                            100% public interface (exclude getters, setters and trivial functions)
+                            Litmus test: Test does not fail if implementation of other unit changes (not interface)
+                        </aside>
+                    </section>
+
+                    <section>
+                        <h2>Test Strategies</h2>
+                        <h5>Case Selection</h5>
+                        <ul>
+                            <li>Typical</li>
+                            <li>Extreme</li>
+                            <li>Maximum variation</li>
+                            <li>High business risk</li>
+                            <li>Failure</li>
+                        </ul>
+                        <aside class="notes">
+                            Extreme or deviant case: outstanding success/failures, exotic events, crises
+                            Maximum variation: on different dimensions
+                        </aside>
+                    </section>
+
+                    <section>
+                        <h2>QUnit Cheat Sheet</h2>
+<pre class="javascript"><code>
+module('hippoTestSuite', {
+    setup: function () { // common setup actions... },
+    teardown: function () { // common teardown actions... }
+});
+
+test('Description of test', function () {
+    // arrange
+    // act
+    // assert
+    strictEqual(expected, actualResult, 'optional error message');
+});
+
+test('Description of another test', function () {
+    // arrange, act, assert
+    strictEqual(expected, actualResult, 'optional error message');
+});
+</code></pre>
+                        <aside class="notes">
+                        </aside>
+                    </section>
+                    
+                    
+                    <section>
+                        <h2>Exercise</h2>
+                        <p>Write test cases for at least one of these</p>
+                        <ul>
+                            <li><a style="color: #82CAFA;" href="http://underscorejs.org/#isArray">_.isArray(object) </a></li>
+                            <li><a style="color: #82CAFA;" href="http://api.jquery.com/empty/">jQuery.empty()</a></li>
+                            <li><a style="color: #82CAFA;" href="https://github.com/mbostock/d3/wiki/Histogram-Layout#_histogram">d3.histogram()(values)</a></li>
+                            <li><a style="color: #82CAFA;" href="http://momentjs.com/docs/#/durations/humanize/">moment.duration().humanize()</a></li>
+                        </ul>
+                        <p style="margin-top: 40px;">
+                        QUnit template - <a href="http://jsbin.com/xomiwi/1/edit">jsbin.com/xomiwi/1/edit</a>
+                        </p>
+                        <aside class="notes">
+                        </aside>
+                    </section>
+                    
+                    <section>
+                        <h2>Test Strategies</h2>
+                        <h5>Basis path testing</h5>
+<pre class="javascript"><code>
+var humanizeDates = function (date1, date2) {
+    if (date1 < date2) {
+        if (date2 - date1 > 500) {
+            return 'very long time ago';
+        }
+        return 'long time ago';
+
+    } else if (date1 > date2) {
+        if (date1 - date2 > 500) {
+            return 'very far in future';
+        }
+        return 'in future';
+    }
+    return 'same time';
+};
+</code></pre>
+                        <p><strong>Statement coverage =</strong> % statements executed in tests</p>
+                        <aside class="notes">
+                        </aside>
+                    </section>
+                    
+                    <section>
+                        <h2>Test Strategies</h2>
+                        <h5>Basis path testing</h5>
+                        <img src="images/basis-path-testing.png" style="padding: 0.8em;" alt="Relation between source code and control flow graph" />
+                        <aside class="notes">
+                            equivalence partitioning/boundary value analysis
+                        </aside>
+                    </section>
+                    
+                    <section>
+                        <h2>Test Strategies</h2>
+                        <h5>Boundary Value Analysis</h5>
+                        <p><strong>Equivalent partition =</strong> range of values that should give the same result</p>
+                        <p><strong>Boundary value =</strong> value that separates adjacent equivalent partitions</p>
+                        <aside class="notes">
+                        </aside>
+                    </section>
+                    
+                    <section>
+                        <h2>Test Strategies</h2>
+                        <h5>Boundary Value Analysis</h5>
+<pre class="javascript"><code>
+moment(someDate).isAfter(anotherDate)
+
+        eq partition 1             eq partition 2
+|--------------------------|---------------------------|
+0                         now                       max Date
+
+</code></pre>
+                        <aside class="notes">
+                        </aside>
+                    </section>
+                    
+                    <section>
+                        <h2>Testing Events</h2>
+<pre class="javascript"><code>
+test('bump causes hippo to trigger a burp event', function () {
+    var burpSpy = sinon.spy();
+    
+    // arrange
+    var hippo = new Hippo();
+    $('body').on('burp', burpSpy);
+    
+    // act
+    hippo.bump();
+    
+    // assert
+    strictEqual(burpSpy.calledOnce, true);
+});
+
+</code></pre>
+                        <aside class="notes">
+                        </aside>
+                    </section>
+
+
+                    <section>
+                        <h2>Exercise<strong>s</strong></h2>
+                        <ul>
+                            <li>Verify custom width option works for <a style="color: #82CAFA;" href="http://yuilibrary.com/yui/docs/slider/">YUI Slider</a> - <a href="http://jsbin.com/mizaq/1/edit">jsbin.com/mizaq/1/edit</a></li>
+                            <li style="margin-top: 20px;">Verify a change event is triggered when <a style="color: #82CAFA;" href="http://api.jqueryui.com/progressbar/#event-change">jQuery.progressbar()</a> changes value - <a href="http://jsbin.com/xomiwi/2/edit">jsbin.com/xomiwi/2/edit</a></li>
+                            <li style="margin-top: 20px;">Verify that nativeTemplateEngine.renderTemplateSource() from <a style="color: #82CAFA;" href="https://github.com/knockout/knockout/blob/master/src/templating/native/nativeTemplateEngine.js">knockout.js</a> calls ko.utils.parseHtmlFragment() on IE<9 - <a href="http://jsbin.com/siyas/1/edit">jsbin.com/siyas/1/edit</a></li>
+                        </ul>
+                        <aside class="notes">
+                        </aside>
+                    </section>
+                </section>
+
+                <section>
+                    <section>
+                        <p>Principle 6</p>
+                        <h2>Clarity</h2>
+                        <p>Create understandable tests</p>
+                        <aside class="notes">
+                        </aside>
+                    </section>
+                    
+                    <section>
+                        <h2>Unclear structure</h2>
+<pre class="javascript"><code>
+test('computeCommonFactor returns -1', function () {
+    var l = new Factor(),
+        div = document.createElement('div');
+    sinon.stub(someMathLib, 'factorize').returns(2);
+    div.id = 'factor';
+    l.init(div);
+    strictEqual(l.computeCommonFactor(-123), -1);
+    l.destroy();
+    someMathLib.factorize.restore();
+});
+
+</code></pre>
+                        <aside class="notes">
+                        </aside>
+                    </section>
+                    
+                    <section>
+                        <h2>Clear structure</h2>
+<pre class="javascript"><code>test('computeCommonFactor returns -1 when an invalid argument is given', function () {
+    var factor = new Factor(),
+        fixture = document.createElement('div'),
+        invalidArgument = -123,
+        result;
+    
+    // arrange    
+    sinon.stub(someMathLib, 'factorize').returns(2);
+    fixture.id = 'factor';
+    factor.init(fixture);
+    
+    // act
+    result = factor.computeCommonFactor(invalidArgument);
+    factor.destroy();
+    someMathLib.factorize.restore();
+    
+    // assert
+    strictEqual(result, -1);
+});
+
+</code></pre>
+                        <aside class="notes">
+                        </aside>
+                    </section>
+
+                    <section>
+                        <h2>Clear structure</h2>
+                        <ul>
+                            <li>Subject, condition, expected result <span style="font-size: 0.5em;">(for test names)</span></li>
+                            <li>Arrange, act, assert <span style="font-size: 0.5em;">(for statements)</li>
+                            <li>Test one thing at a time</li>
+                        </ul>
+                    </section>
+
+                    <section>
+                        <h2>Low readability</h2>
+<pre class="javascript"><code>test('hide fires a hidden event', function () {
+    var accordionElement = document.createElement('ul'),
+        accordionTab1 = document.createElement('li'),
+        accordionTab2 = document.createElement('li'),
+        listener = sinon.spy();
+    
+    // arrange    
+    sinon.stub(someLib, 'accordify', function (options) {
+        if (options.foo === true) {
+            return {
+                goo: function () { return true; },
+                hoo: function () { return ''; }
+            };
+        }
+        return {
+            goo: function () {},
+            hoo: function () {}
+        };
+    });
+    accordionElement.classList.add('myAccordion');
+    accordionTab1.classList.add('tab');
+    accordionTab2.classList.add('tab');
+    accordionElement.appendChild(accordionTab1);
+    accordionElement.appendChild(accordionTab2);
+    qunitFixture.appendChild(accordionElement);
+    accordion = jQuery('.myAccordion').accordion(); // init
+    jQuery.on('hidden', listener);
+    
+    // act
+    accordion.hide();
+    
+    // assert
+    ok(listener.calledOnce);
+    
+    // cleanup
+    jQuery.off('hidden', listener);
+    accordion.destroy();
+    someLib.accordify.restore();
+});
+
+</code></pre>
+                    </section>
+
+                    <section>
+                        <h2>High readability</h2>
+<pre class="javascript"><code>var standardAccordion;
+module('accordion', {
+    setup: function () {
+        setupAccordifyStub();
+        standardAccordion = createAccordion();
+    },
+    teardown: function () {
+        standardAccordion.destroy();
+        someLib.accordify.restore();
+    }
+});
+
+test('hide fires a hidden event', function () {
+    var hiddenEventListener = sinon.spy();
+
+    // arrange
+    jQuery.on('hidden', hiddenEventListener);
+
+    // act
+    standardAccordion.hide();
+
+    // assert
+    ok(hiddenEventListener.calledOnce);
+
+    // cleanup
+    jQuery.off('hidden', hiddenEventListener);
+});
+</code></pre>
+                    </section>
+
+                    <section>
+                        <h2>Better readability</h2>
+                        <ul>
+                            <li>Less boilerplate</span></li>
+                            <li>Meaningful mock names</li>
+                            <li>No obsolete tests</li>
+                        </ul>
+                        <aside class="notes">
+                            - too many mocks and setup code obscures test logic
+                            - kill tests that are no longer applicable
+                        </aside>
+                    </section>
+
+                    <section>
+                        <h2>Exercise</h2>
+                        <p>
+                            Critique unit test for <a style="color: #82CAFA;" href="http://jqueryui.com/accordion/">jQuery UI accordion</a> - <a href="https://github.com/jquery/jquery-ui/blob/master/tests/unit/accordion/accordion_events.js">https://github.com/jquery/jquery-ui/blob/master/tests/unit/accordion/accordion_events.js</a>
+                        </p>
+                        <aside class="notes">
+                        </aside>
+                    </section>
+                </section>
+
+
+                <section>
+                    <section>
+                        <p>Principle 7</p>
+                        <h2 style="font-size: 1.5em;">スピード！スピード！スピード！</h2>
+                        <h3>( Speed! )</h3>
+                        <p>Reduce barriers to working with tests</p>
+                        <aside class="notes">
+                        </aside>
+                    </section>
+
+                    <section>
+                        <h2>Fast and painless</h2>
+                        <ul>
+                            <li>Avoid polling and delays</li>
+                            <li>Make test suites easy to run</li>
+                            <li>Fail fast and clear</li>
+                        </ul>
+                        <aside class="notes">
+                        </aside>
+                    </section>
+                </section>
+
+
+                <section>
+                    <h2>Summary</h3>
+                    <ol>
+                        <li>Context</li>
+                        <li>Interface</li>
+                        <li>Isolation</li>
+                        <li>Independence</li>
+                        <li>Adequacy</li>
+                        <li>Clarity</li>
+                        <li>Speed</li>
+                    </ol>
+                    <p class="fragment"><strong>I</strong>nsanely &nbsp;<strong>S</strong>ynchronous &nbsp;<strong>C</strong>hildren &nbsp;<strong>I</strong>n &nbsp;<strong>A</strong>n &nbsp;<strong>I</strong>mpressive &nbsp;<strong>C</strong>eremony
+                </section>
+<!--
+
+Other simple unit test exercises:
+html()
+jQuery.contains()
+jQuery.noop()
+
+-->
+
+                <section>
+                    <h2>Credits</h2>
+                    <p>Images</p>
+                    <ul style="font-size: 0.4em; line-height: 1.2;">
+                        <li>Gamestarturn, https://commons.wikimedia.org/wiki/File:KES-400A_KEM-407AAA_Test_fixture.JPG, CC Attribution-Share Alike 4.0 International;</li>
+                        <li>TW Hoon, "testing-pyramid" and "basis-path-testing", CC Attribution 4.0 International;</li>
+                    </ul>
+                    <img style="display: block; margin: 1em auto 0.2em;" src="images/cc-by-button.svg" alt="" />
+                    <div style="font-size: 0.6em; line-height: 1.2;">
+                        <p>This work is licensed under a <a href="https://creativecommons.org/licenses/by/4.0/">Creative Commons Attribution 4.0 International License</a>.</p>
+                        <p>Suggestions or errata? Contact TW Hoon at GitHub (username: hoontw).</p>
+                    </div>
+                </section>
+
+            </div>
+
+        </div>
+
+        <script src="lib/js/head.min.js"></script>
+        <script src="js/reveal.min.js"></script>
+
+        <script>
+
+            // Full list of configuration options available here:
+            // https://github.com/hakimel/reveal.js#configuration
+            Reveal.initialize({
+                controls: true,
+                progress: false,
+                history: false,
+                center: true,
+
+                theme: Reveal.getQueryHash().theme, // available themes are in /css/theme
+                transition: Reveal.getQueryHash().transition || 'linear', // default/cube/page/concave/zoom/linear/fade/none
+
+                // Parallax scrolling
+                // parallaxBackgroundImage: 'https://s3.amazonaws.com/hakim-static/reveal-js/reveal-parallax-1.jpg',
+                // parallaxBackgroundSize: '2100px 900px',
+
+                // Optional libraries used to extend on reveal.js
+                dependencies: [
+                    { src: 'lib/js/classList.js', condition: function() { return !document.body.classList; } },
+                    { src: 'plugin/markdown/marked.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+                    { src: 'plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+                    { src: 'plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } },
+                    { src: 'plugin/zoom-js/zoom.js', async: true, condition: function() { return !!document.body.classList; } },
+                    { src: 'plugin/notes/notes.js', async: true, condition: function() { return !!document.body.classList; } }
+                ]
+            });
+
+        </script>
+
+    </body>
+</html>
